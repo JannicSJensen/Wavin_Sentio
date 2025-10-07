@@ -38,91 +38,91 @@ Modern ESPHome integration for the Wavin Sentio floor heating controller via Mod
 ## Quick Start Example
 
 ```yaml
+# External Component - Wavin Sentio v2
 external_components:
-  - source: github://yourusername/esphome_sentio_v2
+  - source: github://JannicSJensen/Wavin_Sentio
     components: [wavin_sentio]
+    refresh: 0s
 
-uart:
-  id: uart_sentio
-  tx_pin: GPIO17
-  rx_pin: GPIO16
-  baud_rate: 19200
-  parity: NONE
-  stop_bits: 1
-
-modbus:
-  id: modbus_sentio
-  uart_id: uart_sentio
-
-modbus_controller:
-  id: sentio_controller
-  modbus_id: modbus_sentio
-  address: 0x01
-
+# Wavin Sentio Component Configuration
 wavin_sentio:
   id: sentio
-  modbus_controller_id: sentio_controller
+  modbus_id: modbus_sentio
   update_interval: 10s
-  flow_control_pin: GPIO10  # Optional RS485 direction control
-  poll_channels_per_cycle: 2
-  channel_01_friendly_name: "Bedroom"
-  channel_02_friendly_name: "Living Room"
-  channel_03_friendly_name: "Kitchen"
-  channel_04_friendly_name: "Bathroom"
+  poll_channels_per_cycle: 2  # Poll 2 channels per update cycle
+  
+  # Friendly names for channels (up to 16)
+  channel_01_friendly_name: ${channel_01_friendly_name}
+  channel_02_friendly_name: ${channel_02_friendly_name}
+  channel_03_friendly_name: ${channel_03_friendly_name}
+  channel_04_friendly_name: ${channel_04_friendly_name}
+  # Add more as needed...
 
+# Climate Entities
 climate:
-  # Single channel climate
+  # Single channel climates
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bedroom"
+    name: "${channel_01_friendly_name}"
     channel: 1
 
-  # Group climate (combines multiple channels)
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Living Room & Kitchen"
-    members: [2, 3]
+    name: "${channel_02_friendly_name}"
+    channel: 2
 
-  # Comfort climate (uses floor temperature)
+  # Group climate (combines Living Room + Kitchen)
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bathroom Comfort"
+    name: "${channel_03_friendly_name}"
+    members: 3
+
+  # Comfort climate (uses floor temperature for Bathroom)
+  - platform: wavin_sentio
+    wavin_sentio_id: sentio
+    name: "${channel_04_friendly_name}"
     channel: 4
     use_floor_temperature: true
 
+# Sensors
 sensor:
-  # Battery sensor
+  # Battery sensors
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bedroom Battery"
+    name: "${channel_01_friendly_name} Battery"
     channel: 1
     type: battery
 
-  # Temperature sensor
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bedroom Temperature"
+    name: "${channel_02_friendly_name} Battery"
+    channel: 2
+    type: battery
+
+  # Temperature sensors
+  - platform: wavin_sentio
+    wavin_sentio_id: sentio
+    name: "${channel_01_friendly_name} Temperature"
     channel: 1
     type: temperature
 
-  # Floor temperature sensor (only works if floor probe detected)
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bathroom Floor Temperature"
-    channel: 4
-    type: floor_temperature
+    name: "${channel_02_friendly_name} Temperature"
+    channel: 2
+    type: temperature
 
-  # Humidity sensor
+  # Floor temperature (only if floor probe detected)
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bedroom Humidity"
+    name: "${channel_01_friendly_name} Floor Temperature"
     channel: 1
-    type: humidity
+    type: floor_temperature
 
   # Comfort setpoint (read-only)
   - platform: wavin_sentio
     wavin_sentio_id: sentio
-    name: "Bedroom Comfort Setpoint"
+    name: "${channel_01_friendly_name} Setpoint"
     channel: 1
     type: comfort_setpoint
 ```
