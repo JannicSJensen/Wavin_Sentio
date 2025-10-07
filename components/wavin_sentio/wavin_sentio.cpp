@@ -6,6 +6,7 @@ namespace esphome {
 namespace wavin_sentio {
 
 static const char *const TAG = "wavin_sentio";
+static const uint8_t MAX_RETRIES = 3;
 
 // Register offsets within each channel's 100-block
 static const uint8_t REG_DESIRED_TEMP = 1;      // X01 - Desired temperature
@@ -140,7 +141,6 @@ bool WavinSentio::read_register(uint8_t channel, uint8_t offset, uint16_t &value
            channel, offset, address, MAX_RETRIES);
   return false;
 }
-}
 
 bool WavinSentio::write_register(uint8_t channel, uint8_t offset, uint16_t value) {
   uint16_t address = this->get_register_address(channel, offset);
@@ -161,7 +161,6 @@ bool WavinSentio::write_register(uint8_t channel, uint8_t offset, uint16_t value
   ESP_LOGW(TAG, "Failed to write to channel %u register %u (0x%04X) after %u attempts", 
            channel, offset, address, MAX_RETRIES);
   return false;
-}
 }
 
 void WavinSentio::poll_channel(uint8_t channel) {
@@ -189,7 +188,7 @@ void WavinSentio::poll_channel(uint8_t channel) {
       if (this->friendly_names_.find(channel) != this->friendly_names_.end()) {
         data->friendly_name = this->friendly_names_[channel];
       } else {
-        data->friendly_name = "Zone " + to_string(channel);
+        data->friendly_name = "Zone " + std::to_string(channel);
       }
       
       ESP_LOGV(TAG, "Channel %u air temp: %.1f°C", channel, temperature);
