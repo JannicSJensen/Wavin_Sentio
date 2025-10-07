@@ -1,5 +1,6 @@
 #include "sensor.h"
 #include "esphome/core/log.h"
+#include <cmath>
 
 namespace esphome {
 namespace wavin_sentio {

@@ -23,6 +23,7 @@ CONF_SENSOR_TYPE_FLOOR_TEMPERATURE = "floor_temperature"
 CONF_SENSOR_TYPE_COMFORT_SETPOINT = "comfort_setpoint"
 
 WavinSentioSensor = wavin_sentio_ns.class_("WavinSentioSensor", sensor.Sensor, cg.Component)
+SensorType = wavin_sentio_ns.enum("SensorType")
 
 CONFIG_SCHEMA = sensor.sensor_schema(
     WavinSentioSensor,
@@ -51,25 +52,25 @@ async def to_code(config):
     sensor_type = config[CONF_TYPE]
     
     if sensor_type == CONF_SENSOR_TYPE_BATTERY:
-        cg.add(var.set_sensor_type(0))  # Battery
+        cg.add(var.set_sensor_type(SensorType.BATTERY))
         if not config.get(sensor.CONF_UNIT_OF_MEASUREMENT):
             cg.add(var.set_unit_of_measurement(UNIT_PERCENT))
         if not config.get(sensor.CONF_DEVICE_CLASS):
             cg.add(var.set_device_class(DEVICE_CLASS_BATTERY))
     elif sensor_type == CONF_SENSOR_TYPE_TEMPERATURE:
-        cg.add(var.set_sensor_type(1))  # Temperature
+        cg.add(var.set_sensor_type(SensorType.TEMPERATURE))
         if not config.get(sensor.CONF_UNIT_OF_MEASUREMENT):
             cg.add(var.set_unit_of_measurement(UNIT_CELSIUS))
         if not config.get(sensor.CONF_DEVICE_CLASS):
             cg.add(var.set_device_class(DEVICE_CLASS_TEMPERATURE))
     elif sensor_type == CONF_SENSOR_TYPE_FLOOR_TEMPERATURE:
-        cg.add(var.set_sensor_type(2))  # Floor Temperature
+        cg.add(var.set_sensor_type(SensorType.FLOOR_TEMPERATURE))
         if not config.get(sensor.CONF_UNIT_OF_MEASUREMENT):
             cg.add(var.set_unit_of_measurement(UNIT_CELSIUS))
         if not config.get(sensor.CONF_DEVICE_CLASS):
             cg.add(var.set_device_class(DEVICE_CLASS_TEMPERATURE))
     elif sensor_type == CONF_SENSOR_TYPE_COMFORT_SETPOINT:
-        cg.add(var.set_sensor_type(3))  # Comfort Setpoint
+        cg.add(var.set_sensor_type(SensorType.COMFORT_SETPOINT))
         if not config.get(sensor.CONF_UNIT_OF_MEASUREMENT):
             cg.add(var.set_unit_of_measurement(UNIT_CELSIUS))
         if not config.get(sensor.CONF_DEVICE_CLASS):
