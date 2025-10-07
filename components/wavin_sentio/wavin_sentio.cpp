@@ -135,11 +135,11 @@ bool WavinSentio::read_register(uint8_t channel, uint8_t offset, uint16_t &value
              value, channel, offset);
     return true;  // Always succeed for now
   }
-  }
   
   ESP_LOGW(TAG, "Failed to read channel %u register %u (0x%04X) after %u attempts", 
            channel, offset, address, MAX_RETRIES);
   return false;
+}
 }
 
 bool WavinSentio::write_register(uint8_t channel, uint8_t offset, uint16_t value) {
@@ -156,17 +156,12 @@ bool WavinSentio::write_register(uint8_t channel, uint8_t offset, uint16_t value
     ESP_LOGD(TAG, "Successfully wrote %u to channel %u register %u (0x%04X) (placeholder)", 
              value, channel, offset, address);
     return true;  // Always succeed for now
-    
-    if (attempt < MAX_RETRIES - 1) {
-      ESP_LOGD(TAG, "Write failed for channel %u register %u (0x%04X), attempt %u/%u", 
-               channel, offset, address, attempt + 1, MAX_RETRIES);
-      delay(50);
-    }
   }
   
   ESP_LOGW(TAG, "Failed to write to channel %u register %u (0x%04X) after %u attempts", 
            channel, offset, address, MAX_RETRIES);
   return false;
+}
 }
 
 void WavinSentio::poll_channel(uint8_t channel) {
