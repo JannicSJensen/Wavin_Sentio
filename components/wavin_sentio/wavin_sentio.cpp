@@ -103,11 +103,13 @@ bool WavinSentio::read_register(uint8_t channel, uint8_t offset, uint16_t &value
   
   // Try to read with retry logic
   for (uint8_t attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    // Use modbus read_register from ModbusDevice base class
+    // Use standard modbus methods from ModbusDevice base class
+    std::vector<uint16_t> result_vector;
+    
     // For input registers (function code 0x04)
     if (offset < 10) {  // Registers 1-9 are input registers
-      auto result = this->read_register(address, &value, 1, false);
-      if (result == 0) {  // Success
+      if (this->read_input_registers(address, 1, result_vector) && !result_vector.empty()) {
+        value = result_vector[0];
         return true;
       }
       
@@ -117,8 +119,8 @@ bool WavinSentio::read_register(uint8_t channel, uint8_t offset, uint16_t &value
         delay(50);  // Small delay before retry
       }
     } else {  // Register 19+ are holding registers
-      auto result = this->read_register(address, &value, 1, true);
-      if (result == 0) {  // Success
+      if (this->read_holding_registers(address, 1, result_vector) && !result_vector.empty()) {
+        value = result_vector[0];
         return true;
       }
       
@@ -140,10 +142,9 @@ bool WavinSentio::write_register(uint8_t channel, uint8_t offset, uint16_t value
   
   // Try to write with retry logic
   for (uint8_t attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    // Use modbus write_register from ModbusDevice base class
+    // Use modbus write method from ModbusDevice base class
     // Holding registers use function code 0x06 (write single register)
-    auto result = this->write_register(address, value, true);
-    if (result == 0) {  // Success
+    if (this->write_single_register(address, value)) {
       ESP_LOGD(TAG, "Successfully wrote %u to channel %u register %u (0x%04X)", 
                value, channel, offset, address);
       return true;

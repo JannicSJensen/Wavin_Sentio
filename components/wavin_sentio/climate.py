@@ -13,8 +13,9 @@ CONF_USE_FLOOR_TEMPERATURE = "use_floor_temperature"
 WavinSentioClimate = wavin_sentio_ns.class_("WavinSentioClimate", climate.Climate, cg.Component)
 
 # Climate schema supports either single channel or group of channels
-CONFIG_SCHEMA = climate.CLIMATE_SCHEMA.extend({
-    cv.GenerateID(): cv.declare_id(WavinSentioClimate),
+CONFIG_SCHEMA = climate.climate_schema(
+    WavinSentioClimate,
+).extend({
     cv.GenerateID(CONF_WAVIN_SENTIO_ID): cv.use_id(WavinSentio),
     cv.Optional(CONF_CHANNEL): cv.int_range(min=1, max=16),
     cv.Optional(CONF_MEMBERS): cv.ensure_list(cv.int_range(min=1, max=16)),

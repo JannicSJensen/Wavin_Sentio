@@ -22,7 +22,7 @@ class WavinSentioSensor : public sensor::Sensor, public Component {
   void setup() override;
   void loop() override;
   void dump_config() override;
-  void update() override;
+  void update();
 
   float get_setup_priority() const override { return setup_priority::DATA; }
 
