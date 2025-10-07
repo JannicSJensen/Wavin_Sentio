@@ -66,6 +66,9 @@ class WavinSentio : public PollingComponent, public modbus::ModbusDevice {
   void register_climate(climate::Climate *climate_entity, uint8_t channel);
   void register_climate_group(climate::Climate *climate_entity, const std::vector<uint8_t> &members);
   
+  // ModbusDevice interface
+  void on_modbus_data(const std::vector<uint8_t> &data) override;
+  
  protected:
   void poll_channel(uint8_t channel);
   void discover_channels();

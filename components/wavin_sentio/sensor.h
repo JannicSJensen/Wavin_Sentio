@@ -7,7 +7,7 @@
 namespace esphome {
 namespace wavin_sentio {
 
-enum class SensorType : uint8_t {
+enum SensorType : uint8_t {
   BATTERY = 0,
   TEMPERATURE = 1,
   FLOOR_TEMPERATURE = 2,

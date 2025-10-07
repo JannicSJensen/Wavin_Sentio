@@ -261,5 +261,15 @@ void WavinSentio::register_climate_group(climate::Climate *climate_entity, const
   // Group climate entities will aggregate data from multiple channels
 }
 
+void WavinSentio::on_modbus_data(const std::vector<uint8_t> &data) {
+  ESP_LOGV(TAG, "Received Modbus data: %u bytes", data.size());
+  // Handle incoming modbus data
+  // This is called when data is received from the modbus device
+  // For now, just log the data for debugging
+  for (size_t i = 0; i < data.size() && i < 16; i++) {
+    ESP_LOGV(TAG, "  [%u]: 0x%02X", i, data[i]);
+  }
+}
+
 }  // namespace wavin_sentio
 }  // namespace esphome
